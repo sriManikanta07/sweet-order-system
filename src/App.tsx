@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound.tsx";
 import AdminLogin from "./pages/admin/AdminLogin.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminProducts from "./pages/admin/AdminProducts.tsx";
+import AdminBanners from "./pages/admin/AdminBanners.tsx";
 
 const queryClient = new QueryClient();
 
