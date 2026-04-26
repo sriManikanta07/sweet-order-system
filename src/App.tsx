@@ -40,6 +40,14 @@ const App = () => (
                 </AdminGuard>
               }
             />
+            <Route
+              path="/admin/banners"
+              element={
+                <AdminGuard>
+                  <AdminBanners />
+                </AdminGuard>
+              }
+            />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
