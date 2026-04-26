@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { BannerCarousel, type Banner } from "@/components/storefront/BannerCarousel";
 import { ProductCard, type Product } from "@/components/storefront/ProductCard";
 import { ValueStrip } from "@/components/storefront/ValueStrip";
+import { OrderDialog } from "@/components/storefront/OrderDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BAKERY } from "@/config/bakery";
 
@@ -13,6 +14,8 @@ const Index = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [orderProduct, setOrderProduct] = useState<Product | null>(null);
+  const [orderOpen, setOrderOpen] = useState(false);
 
   useEffect(() => {
     document.title = `${BAKERY.name} — Artisan bakery, order on WhatsApp`;
@@ -126,7 +129,13 @@ const Index = () => {
                     className="animate-fade-up"
                     style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
                   >
-                    <ProductCard product={p} />
+                    <ProductCard
+                      product={p}
+                      onOrder={(prod) => {
+                        setOrderProduct(prod);
+                        setOrderOpen(true);
+                      }}
+                    />
                   </div>
                 ))}
           </div>
@@ -143,6 +152,12 @@ const Index = () => {
       </main>
 
       <SiteFooter />
+
+      <OrderDialog
+        product={orderProduct}
+        open={orderOpen}
+        onOpenChange={setOrderOpen}
+      />
     </div>
   );
 };
