@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Croissant, ShoppingBag } from "lucide-react";
 import { BAKERY } from "@/config/bakery";
+import { ThemeToggle } from "@/components/storefront/ThemeToggle";
 
 export function SiteHeader() {
   return (
@@ -32,6 +33,7 @@ export function SiteHeader() {
           >
             Our story
           </a>
+          <ThemeToggle />
           <Link
             to="/admin"
             className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-2 text-xs font-medium text-foreground/80 shadow-soft transition-all hover:border-primary/40 hover:text-primary sm:text-sm"

@@ -1,5 +1,5 @@
 import { MessageCircle } from "lucide-react";
-import { BAKERY, buildWhatsAppOrderUrl } from "@/config/bakery";
+import { BAKERY } from "@/config/bakery";
 
 export type Product = {
   id: string;
@@ -12,15 +12,10 @@ export type Product = {
 
 interface ProductCardProps {
   product: Product;
+  onOrder: (product: Product) => void;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
-  const orderUrl = buildWhatsAppOrderUrl({
-    productName: product.name,
-    quantity: 1,
-    price: product.price,
-  });
-
+export function ProductCard({ product, onOrder }: ProductCardProps) {
   return (
     <article className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-card transition-all duration-500 hover:-translate-y-1 hover:shadow-warm">
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
@@ -65,15 +60,14 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        <a
-          href={orderUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          onClick={() => onOrder(product)}
           className="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-soft transition-all duration-300 hover:bg-primary-glow hover:shadow-warm"
         >
           <MessageCircle className="h-4 w-4" />
-          Order on WhatsApp
-        </a>
+          Order now
+        </button>
       </div>
     </article>
   );
