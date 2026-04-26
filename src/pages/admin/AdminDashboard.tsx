@@ -68,7 +68,7 @@ const AdminDashboard = () => {
               icon: ImageIcon,
               title: "Banners",
               body: "Manage homepage carousel images.",
-              to: null,
+              to: "/admin/banners",
             },
             {
               icon: ClipboardList,
