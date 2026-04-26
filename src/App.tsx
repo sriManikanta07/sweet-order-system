@@ -9,6 +9,7 @@ import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import AdminLogin from "./pages/admin/AdminLogin.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
+import AdminProducts from "./pages/admin/AdminProducts.tsx";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,14 @@ const App = () => (
               element={
                 <AdminGuard>
                   <AdminDashboard />
+                </AdminGuard>
+              }
+            />
+            <Route
+              path="/admin/products"
+              element={
+                <AdminGuard>
+                  <AdminProducts />
                 </AdminGuard>
               }
             />

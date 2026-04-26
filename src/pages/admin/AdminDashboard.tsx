@@ -58,28 +58,58 @@ const AdminDashboard = () => {
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            { icon: Package, title: "Products", body: "Add, edit, and remove items from your menu.", soon: true },
-            { icon: ImageIcon, title: "Banners", body: "Manage homepage carousel images.", soon: true },
-            { icon: ClipboardList, title: "Orders", body: "Track WhatsApp orders, payments, and deliveries.", soon: true },
-          ].map((card) => (
-            <div
-              key={card.title}
-              className="group rounded-xl border border-border bg-card p-6 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-warm"
-            >
-              <span className="grid h-11 w-11 place-items-center rounded-lg bg-secondary text-primary">
-                <card.icon className="h-5 w-5" />
-              </span>
-              <h3 className="mt-4 font-display text-xl font-semibold text-foreground">
-                {card.title}
-              </h3>
-              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{card.body}</p>
-              {card.soon && (
-                <span className="mt-4 inline-block rounded-full bg-highlight/40 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-highlight-foreground">
-                  Coming next
+            {
+              icon: Package,
+              title: "Products",
+              body: "Add, edit, and remove items from your menu.",
+              to: "/admin/products",
+            },
+            {
+              icon: ImageIcon,
+              title: "Banners",
+              body: "Manage homepage carousel images.",
+              to: null,
+            },
+            {
+              icon: ClipboardList,
+              title: "Orders",
+              body: "Track WhatsApp orders, payments, and deliveries.",
+              to: null,
+            },
+          ].map((card) => {
+            const inner = (
+              <>
+                <span className="grid h-11 w-11 place-items-center rounded-lg bg-secondary text-primary">
+                  <card.icon className="h-5 w-5" />
                 </span>
-              )}
-            </div>
-          ))}
+                <h3 className="mt-4 font-display text-xl font-semibold text-foreground">
+                  {card.title}
+                </h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{card.body}</p>
+                {!card.to && (
+                  <span className="mt-4 inline-block rounded-full bg-highlight/40 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-highlight-foreground">
+                    Coming next
+                  </span>
+                )}
+                {card.to && (
+                  <span className="mt-4 inline-block rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                    Manage →
+                  </span>
+                )}
+              </>
+            );
+            const className =
+              "group block rounded-xl border border-border bg-card p-6 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-warm";
+            return card.to ? (
+              <Link key={card.title} to={card.to} className={className}>
+                {inner}
+              </Link>
+            ) : (
+              <div key={card.title} className={className}>
+                {inner}
+              </div>
+            );
+          })}
         </div>
       </main>
     </div>
