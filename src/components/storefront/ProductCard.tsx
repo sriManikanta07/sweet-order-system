@@ -60,15 +60,14 @@ export function ProductCard({ product, onOrder }: ProductCardProps) {
           </div>
         </div>
 
-        <a
-          href={orderUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          onClick={() => onOrder(product)}
           className="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-soft transition-all duration-300 hover:bg-primary-glow hover:shadow-warm"
         >
           <MessageCircle className="h-4 w-4" />
-          Order on WhatsApp
-        </a>
+          Order now
+        </button>
       </div>
     </article>
   );
