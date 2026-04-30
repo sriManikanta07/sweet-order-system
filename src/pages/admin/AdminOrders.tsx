@@ -466,7 +466,7 @@ const AdminOrders = () => {
                           {o.payment_status}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
                         <Select
                           value={o.order_status}
                           onValueChange={(v) => quickStatus(o, v as OrderStatus)}
