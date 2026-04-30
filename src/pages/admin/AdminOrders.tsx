@@ -826,6 +826,52 @@ const AdminOrders = () => {
   );
 };
 
+function SectionLabel({
+  icon: Icon,
+  text,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  text: string;
+}) {
+  return (
+    <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+      <Icon className="h-3.5 w-3.5" />
+      {text}
+    </div>
+  );
+}
+
+function InfoTile({
+  label,
+  value,
+  capitalize,
+  icon: Icon,
+}: {
+  label: string;
+  value: string;
+  capitalize?: boolean;
+  icon?: React.ComponentType<{ className?: string }>;
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-card p-3">
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className={`mt-1 flex items-center gap-1.5 text-sm font-medium ${capitalize ? "capitalize" : ""}`}>
+        {Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground" />}
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between text-sm">
+      <span className="text-muted-foreground">{label}</span>
+      {children}
+    </div>
+  );
+}
+
 function StatCard({
   icon: Icon,
   label,
