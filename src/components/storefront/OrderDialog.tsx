@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { BAKERY, buildWhatsAppOrderUrl } from "@/config/bakery";
+import { BAKERY, buildWhatsAppOrderText, buildWhatsAppOrderUrl } from "@/config/bakery";
 import type { Product } from "./ProductCard";
 
 interface OrderDialogProps {
