@@ -54,7 +54,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { MessageCircle, Phone, Calendar, Truck, StickyNote, Package } from "lucide-react";
 import { toast } from "sonner";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 
@@ -119,6 +128,7 @@ const AdminOrders = () => {
   const [form, setForm] = useState<FormState>(blankForm);
   const [saving, setSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Order | null>(null);
+  const [detailOrder, setDetailOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     document.title = `Orders — ${BAKERY.name} Admin`;
@@ -416,7 +426,11 @@ const AdminOrders = () => {
                 </TableHeader>
                 <TableBody>
                   {filtered.map((o) => (
-                    <TableRow key={o.id}>
+                    <TableRow
+                      key={o.id}
+                      className="cursor-pointer"
+                      onClick={() => setDetailOrder(o)}
+                    >
                       <TableCell className="font-mono text-xs">{o.order_code}</TableCell>
                       <TableCell>
                         <div className="font-medium text-foreground">{o.customer_name}</div>
@@ -447,12 +461,12 @@ const AdminOrders = () => {
                           </div>
                         )}
                       </TableCell>
-                      <TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
                         <Badge className={paymentStatusVariants[o.payment_status]} variant="secondary">
                           {o.payment_status}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
                         <Select
                           value={o.order_status}
                           onValueChange={(v) => quickStatus(o, v as OrderStatus)}
@@ -469,7 +483,7 @@ const AdminOrders = () => {
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-end gap-1">
                           <Button size="icon" variant="ghost" onClick={() => openEdit(o)}>
                             <Pencil className="h-4 w-4" />
@@ -491,6 +505,148 @@ const AdminOrders = () => {
           )}
         </div>
       </main>
+
+      {/* Order details side panel */}
+      <Sheet open={!!detailOrder} onOpenChange={(o) => !o && setDetailOrder(null)}>
+        <SheetContent className="w-full overflow-y-auto sm:max-w-md">
+          {detailOrder && (
+            <>
+              <SheetHeader className="text-left">
+                <div className="flex items-center justify-between gap-2">
+                  <SheetTitle className="font-display text-xl">
+                    {detailOrder.customer_name}
+                  </SheetTitle>
+                  <Badge
+                    className={orderStatusVariants[detailOrder.order_status]}
+                    variant="secondary"
+                  >
+                    {detailOrder.order_status}
+                  </Badge>
+                </div>
+                <SheetDescription className="font-mono text-xs">
+                  {detailOrder.order_code} · placed{" "}
+                  {new Date(detailOrder.created_at).toLocaleString()}
+                </SheetDescription>
+              </SheetHeader>
+
+              <div className="mt-6 space-y-5">
+                <section>
+                  <SectionLabel icon={Phone} text="Contact" />
+                  <div className="mt-2 flex items-center justify-between rounded-lg border border-border bg-secondary/30 p-3">
+                    <span className="text-sm font-medium">{detailOrder.phone_number}</span>
+                    <a
+                      href={`https://wa.me/${detailOrder.phone_number.replace(/\D/g, "")}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-500/25 dark:text-emerald-400"
+                    >
+                      <MessageCircle className="h-3.5 w-3.5" />
+                      WhatsApp
+                    </a>
+                  </div>
+                </section>
+
+                <section>
+                  <SectionLabel icon={Package} text="Product details" />
+                  <div className="mt-2 rounded-lg border border-border bg-card p-3">
+                    <p className="whitespace-pre-wrap text-sm text-foreground">
+                      {detailOrder.product_details}
+                    </p>
+                    <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="rounded-full bg-secondary px-2 py-0.5 font-medium text-primary">
+                        Qty {detailOrder.quantity}
+                      </span>
+                    </div>
+                  </div>
+                </section>
+
+                <section>
+                  <SectionLabel icon={Truck} text="Delivery" />
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <InfoTile label="Type" value={detailOrder.delivery_type} capitalize />
+                    <InfoTile
+                      label="Date"
+                      value={new Date(detailOrder.delivery_date).toLocaleDateString()}
+                      icon={Calendar}
+                    />
+                  </div>
+                </section>
+
+                <section>
+                  <SectionLabel icon={IndianRupee} text="Payment" />
+                  <div className="mt-2 space-y-2 rounded-lg border border-border bg-card p-3">
+                    <Row label="Total">
+                      <span className="font-display text-lg font-semibold">
+                        {BAKERY.currency}
+                        {Number(detailOrder.total_amount).toLocaleString()}
+                      </span>
+                    </Row>
+                    <Row label="Advance paid">
+                      <span>
+                        {BAKERY.currency}
+                        {Number(detailOrder.advance_paid).toLocaleString()}
+                      </span>
+                    </Row>
+                    <Separator />
+                    <Row label="Balance due">
+                      <span className="font-medium">
+                        {BAKERY.currency}
+                        {Math.max(
+                          0,
+                          Number(detailOrder.total_amount) - Number(detailOrder.advance_paid),
+                        ).toLocaleString()}
+                      </span>
+                    </Row>
+                    <Row label="Status">
+                      <Badge
+                        className={paymentStatusVariants[detailOrder.payment_status]}
+                        variant="secondary"
+                      >
+                        {detailOrder.payment_status}
+                      </Badge>
+                    </Row>
+                  </div>
+                </section>
+
+                {detailOrder.notes && (
+                  <section>
+                    <SectionLabel icon={StickyNote} text="Notes" />
+                    <p className="mt-2 whitespace-pre-wrap rounded-lg border border-dashed border-border bg-highlight/20 p-3 text-sm text-foreground">
+                      {detailOrder.notes}
+                    </p>
+                  </section>
+                )}
+
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => {
+                      const o = detailOrder;
+                      setDetailOrder(null);
+                      openEdit(o);
+                    }}
+                  >
+                    <Pencil className="mr-1.5 h-4 w-4" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1 text-destructive hover:text-destructive"
+                    onClick={() => {
+                      setDeleteTarget(detailOrder);
+                      setDetailOrder(null);
+                    }}
+                  >
+                    <Trash2 className="mr-1.5 h-4 w-4" />
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
 
       {/* Add/Edit dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -669,6 +825,52 @@ const AdminOrders = () => {
     </div>
   );
 };
+
+function SectionLabel({
+  icon: Icon,
+  text,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  text: string;
+}) {
+  return (
+    <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+      <Icon className="h-3.5 w-3.5" />
+      {text}
+    </div>
+  );
+}
+
+function InfoTile({
+  label,
+  value,
+  capitalize,
+  icon: Icon,
+}: {
+  label: string;
+  value: string;
+  capitalize?: boolean;
+  icon?: React.ComponentType<{ className?: string }>;
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-card p-3">
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className={`mt-1 flex items-center gap-1.5 text-sm font-medium ${capitalize ? "capitalize" : ""}`}>
+        {Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground" />}
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between text-sm">
+      <span className="text-muted-foreground">{label}</span>
+      {children}
+    </div>
+  );
+}
 
 function StatCard({
   icon: Icon,
