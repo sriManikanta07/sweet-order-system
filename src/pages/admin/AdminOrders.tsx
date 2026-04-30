@@ -157,7 +157,9 @@ const AdminOrders = () => {
       (sum, o) => sum + Math.max(0, Number(o.total_amount ?? 0) - Number(o.advance_paid ?? 0)),
       0,
     );
-    return { total, pending, completed, revenue, outstanding };
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const today = orders.filter((o) => (o.created_at ?? "").slice(0, 10) === todayStr).length;
+    return { total, pending, completed, revenue, outstanding, today };
   }, [orders]);
 
   const filtered = useMemo(() => {
@@ -258,6 +260,19 @@ const AdminOrders = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
   };
 
+  const quickPayment = async (o: Order, next: PaymentStatus) => {
+    const { error } = await supabase
+      .from("orders")
+      .update({ payment_status: next })
+      .eq("id", o.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(`Payment marked ${next}`);
+    queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.customer_name || !form.phone_number || !form.product_details || !form.total_amount) {
@@ -353,8 +368,9 @@ const AdminOrders = () => {
         </div>
 
         {/* Stats */}
-        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <StatCard icon={ShoppingBag} label="Total orders" value={stats.total} />
+          <StatCard icon={Calendar} label="Today" value={stats.today} />
           <StatCard icon={Clock} label="Pending" value={stats.pending} />
           <StatCard icon={CheckCircle2} label="Completed" value={stats.completed} />
           <StatCard
@@ -462,9 +478,21 @@ const AdminOrders = () => {
                         )}
                       </TableCell>
                       <TableCell onClick={(e) => e.stopPropagation()}>
-                        <Badge className={paymentStatusVariants[o.payment_status]} variant="secondary">
-                          {o.payment_status}
-                        </Badge>
+                        <Select
+                          value={o.payment_status}
+                          onValueChange={(v) => quickPayment(o, v as PaymentStatus)}
+                        >
+                          <SelectTrigger
+                            className={`h-8 w-[120px] border-0 ${paymentStatusVariants[o.payment_status]}`}
+                          >
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="partial">Partial</SelectItem>
+                            <SelectItem value="paid">Paid</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </TableCell>
                       <TableCell onClick={(e) => e.stopPropagation()}>
                         <Select
