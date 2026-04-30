@@ -74,7 +74,7 @@ const AdminDashboard = () => {
               icon: ClipboardList,
               title: "Orders",
               body: "Track WhatsApp orders, payments, and deliveries.",
-              to: null,
+              to: "/admin/orders",
             },
           ].map((card) => {
             const inner = (

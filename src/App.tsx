@@ -12,6 +12,7 @@ import AdminLogin from "./pages/admin/AdminLogin.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminProducts from "./pages/admin/AdminProducts.tsx";
 import AdminBanners from "./pages/admin/AdminBanners.tsx";
+import AdminOrders from "./pages/admin/AdminOrders.tsx";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,14 @@ const App = () => (
                 element={
                   <AdminGuard>
                     <AdminBanners />
+                  </AdminGuard>
+                }
+              />
+              <Route
+                path="/admin/orders"
+                element={
+                  <AdminGuard>
+                    <AdminOrders />
                   </AdminGuard>
                 }
               />
