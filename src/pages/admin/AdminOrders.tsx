@@ -506,6 +506,148 @@ const AdminOrders = () => {
         </div>
       </main>
 
+      {/* Order details side panel */}
+      <Sheet open={!!detailOrder} onOpenChange={(o) => !o && setDetailOrder(null)}>
+        <SheetContent className="w-full overflow-y-auto sm:max-w-md">
+          {detailOrder && (
+            <>
+              <SheetHeader className="text-left">
+                <div className="flex items-center justify-between gap-2">
+                  <SheetTitle className="font-display text-xl">
+                    {detailOrder.customer_name}
+                  </SheetTitle>
+                  <Badge
+                    className={orderStatusVariants[detailOrder.order_status]}
+                    variant="secondary"
+                  >
+                    {detailOrder.order_status}
+                  </Badge>
+                </div>
+                <SheetDescription className="font-mono text-xs">
+                  {detailOrder.order_code} · placed{" "}
+                  {new Date(detailOrder.created_at).toLocaleString()}
+                </SheetDescription>
+              </SheetHeader>
+
+              <div className="mt-6 space-y-5">
+                <section>
+                  <SectionLabel icon={Phone} text="Contact" />
+                  <div className="mt-2 flex items-center justify-between rounded-lg border border-border bg-secondary/30 p-3">
+                    <span className="text-sm font-medium">{detailOrder.phone_number}</span>
+                    <a
+                      href={`https://wa.me/${detailOrder.phone_number.replace(/\D/g, "")}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-500/25 dark:text-emerald-400"
+                    >
+                      <MessageCircle className="h-3.5 w-3.5" />
+                      WhatsApp
+                    </a>
+                  </div>
+                </section>
+
+                <section>
+                  <SectionLabel icon={Package} text="Product details" />
+                  <div className="mt-2 rounded-lg border border-border bg-card p-3">
+                    <p className="whitespace-pre-wrap text-sm text-foreground">
+                      {detailOrder.product_details}
+                    </p>
+                    <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="rounded-full bg-secondary px-2 py-0.5 font-medium text-primary">
+                        Qty {detailOrder.quantity}
+                      </span>
+                    </div>
+                  </div>
+                </section>
+
+                <section>
+                  <SectionLabel icon={Truck} text="Delivery" />
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <InfoTile label="Type" value={detailOrder.delivery_type} capitalize />
+                    <InfoTile
+                      label="Date"
+                      value={new Date(detailOrder.delivery_date).toLocaleDateString()}
+                      icon={Calendar}
+                    />
+                  </div>
+                </section>
+
+                <section>
+                  <SectionLabel icon={IndianRupee} text="Payment" />
+                  <div className="mt-2 space-y-2 rounded-lg border border-border bg-card p-3">
+                    <Row label="Total">
+                      <span className="font-display text-lg font-semibold">
+                        {BAKERY.currency}
+                        {Number(detailOrder.total_amount).toLocaleString()}
+                      </span>
+                    </Row>
+                    <Row label="Advance paid">
+                      <span>
+                        {BAKERY.currency}
+                        {Number(detailOrder.advance_paid).toLocaleString()}
+                      </span>
+                    </Row>
+                    <Separator />
+                    <Row label="Balance due">
+                      <span className="font-medium">
+                        {BAKERY.currency}
+                        {Math.max(
+                          0,
+                          Number(detailOrder.total_amount) - Number(detailOrder.advance_paid),
+                        ).toLocaleString()}
+                      </span>
+                    </Row>
+                    <Row label="Status">
+                      <Badge
+                        className={paymentStatusVariants[detailOrder.payment_status]}
+                        variant="secondary"
+                      >
+                        {detailOrder.payment_status}
+                      </Badge>
+                    </Row>
+                  </div>
+                </section>
+
+                {detailOrder.notes && (
+                  <section>
+                    <SectionLabel icon={StickyNote} text="Notes" />
+                    <p className="mt-2 whitespace-pre-wrap rounded-lg border border-dashed border-border bg-highlight/20 p-3 text-sm text-foreground">
+                      {detailOrder.notes}
+                    </p>
+                  </section>
+                )}
+
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => {
+                      const o = detailOrder;
+                      setDetailOrder(null);
+                      openEdit(o);
+                    }}
+                  >
+                    <Pencil className="mr-1.5 h-4 w-4" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1 text-destructive hover:text-destructive"
+                    onClick={() => {
+                      setDeleteTarget(detailOrder);
+                      setDetailOrder(null);
+                    }}
+                  >
+                    <Trash2 className="mr-1.5 h-4 w-4" />
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
+
       {/* Add/Edit dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
