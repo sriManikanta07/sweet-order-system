@@ -157,7 +157,9 @@ const AdminOrders = () => {
       (sum, o) => sum + Math.max(0, Number(o.total_amount ?? 0) - Number(o.advance_paid ?? 0)),
       0,
     );
-    return { total, pending, completed, revenue, outstanding };
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const today = orders.filter((o) => (o.created_at ?? "").slice(0, 10) === todayStr).length;
+    return { total, pending, completed, revenue, outstanding, today };
   }, [orders]);
 
   const filtered = useMemo(() => {
