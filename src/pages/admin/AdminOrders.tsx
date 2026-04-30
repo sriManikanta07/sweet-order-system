@@ -478,9 +478,21 @@ const AdminOrders = () => {
                         )}
                       </TableCell>
                       <TableCell onClick={(e) => e.stopPropagation()}>
-                        <Badge className={paymentStatusVariants[o.payment_status]} variant="secondary">
-                          {o.payment_status}
-                        </Badge>
+                        <Select
+                          value={o.payment_status}
+                          onValueChange={(v) => quickPayment(o, v as PaymentStatus)}
+                        >
+                          <SelectTrigger
+                            className={`h-8 w-[120px] border-0 ${paymentStatusVariants[o.payment_status]}`}
+                          >
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="partial">Partial</SelectItem>
+                            <SelectItem value="paid">Paid</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </TableCell>
                       <TableCell onClick={(e) => e.stopPropagation()}>
                         <Select
