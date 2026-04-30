@@ -33,12 +33,15 @@ export function OrderDialog({ product, open, onOpenChange }: OrderDialogProps) {
   if (!product) return null;
 
   const subtotal = Number(product.price) * quantity;
-  const orderUrl = buildWhatsAppOrderUrl({
+  const messageOpts = {
     productName: product.name,
     quantity,
     price: product.price,
     note,
-  });
+    imageUrl: product.image_url,
+  };
+  const previewText = buildWhatsAppOrderText(messageOpts);
+  const orderUrl = buildWhatsAppOrderUrl(messageOpts);
 
   const dec = () => setQuantity((q) => Math.max(1, q - 1));
   const inc = () => setQuantity((q) => Math.min(99, q + 1));
