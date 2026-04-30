@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { BAKERY, buildWhatsAppOrderUrl } from "@/config/bakery";
+import { BAKERY, buildWhatsAppOrderText, buildWhatsAppOrderUrl } from "@/config/bakery";
 import type { Product } from "./ProductCard";
 
 interface OrderDialogProps {
@@ -33,19 +33,22 @@ export function OrderDialog({ product, open, onOpenChange }: OrderDialogProps) {
   if (!product) return null;
 
   const subtotal = Number(product.price) * quantity;
-  const orderUrl = buildWhatsAppOrderUrl({
+  const messageOpts = {
     productName: product.name,
     quantity,
     price: product.price,
     note,
-  });
+    imageUrl: product.image_url,
+  };
+  const previewText = buildWhatsAppOrderText(messageOpts);
+  const orderUrl = buildWhatsAppOrderUrl(messageOpts);
 
   const dec = () => setQuantity((q) => Math.max(1, q - 1));
   const inc = () => setQuantity((q) => Math.min(99, q + 1));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="font-display text-2xl">{product.name}</DialogTitle>
           <DialogDescription>
@@ -116,6 +119,20 @@ export function OrderDialog({ product, open, onOpenChange }: OrderDialogProps) {
               {BAKERY.currency}
               {subtotal.toLocaleString()}
             </span>
+          </div>
+
+          <div className="rounded-lg border border-border bg-card">
+            <div className="flex items-center justify-between border-b border-border px-4 py-2">
+              <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                Message preview
+              </span>
+              <span className="text-[10px] text-muted-foreground">
+                Sent to WhatsApp
+              </span>
+            </div>
+            <pre className="max-h-48 overflow-y-auto whitespace-pre-wrap break-words px-4 py-3 font-sans text-xs leading-relaxed text-foreground/90">
+{previewText}
+            </pre>
           </div>
         </div>
 
