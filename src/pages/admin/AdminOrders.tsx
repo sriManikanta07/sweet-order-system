@@ -426,7 +426,11 @@ const AdminOrders = () => {
                 </TableHeader>
                 <TableBody>
                   {filtered.map((o) => (
-                    <TableRow key={o.id}>
+                    <TableRow
+                      key={o.id}
+                      className="cursor-pointer"
+                      onClick={() => setDetailOrder(o)}
+                    >
                       <TableCell className="font-mono text-xs">{o.order_code}</TableCell>
                       <TableCell>
                         <div className="font-medium text-foreground">{o.customer_name}</div>
