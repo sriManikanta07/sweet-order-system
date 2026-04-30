@@ -461,7 +461,7 @@ const AdminOrders = () => {
                           </div>
                         )}
                       </TableCell>
-                      <TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
                         <Badge className={paymentStatusVariants[o.payment_status]} variant="secondary">
                           {o.payment_status}
                         </Badge>
