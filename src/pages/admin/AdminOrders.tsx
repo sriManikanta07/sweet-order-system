@@ -260,6 +260,19 @@ const AdminOrders = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
   };
 
+  const quickPayment = async (o: Order, next: PaymentStatus) => {
+    const { error } = await supabase
+      .from("orders")
+      .update({ payment_status: next })
+      .eq("id", o.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(`Payment marked ${next}`);
+    queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.customer_name || !form.phone_number || !form.product_details || !form.total_amount) {
