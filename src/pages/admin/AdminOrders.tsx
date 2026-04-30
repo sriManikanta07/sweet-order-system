@@ -54,7 +54,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { MessageCircle, Phone, Calendar, Truck, StickyNote, Package } from "lucide-react";
 import { toast } from "sonner";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 
