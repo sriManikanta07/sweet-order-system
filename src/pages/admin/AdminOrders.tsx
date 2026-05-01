@@ -67,6 +67,7 @@ import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Phone, Calendar, Truck, StickyNote, Package } from "lucide-react";
 import { toast } from "sonner";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
+import { InvoiceDialog } from "@/components/admin/InvoiceDialog";
 
 type Order = Tables<"orders">;
 type DeliveryType = Order["delivery_type"];
