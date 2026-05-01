@@ -516,6 +516,14 @@ const AdminOrders = () => {
                       </TableCell>
                       <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-end gap-1">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => setInvoiceOrder(o)}
+                            title="Print invoice"
+                          >
+                            <Printer className="h-4 w-4" />
+                          </Button>
                           <Button size="icon" variant="ghost" onClick={() => openEdit(o)}>
                             <Pencil className="h-4 w-4" />
                           </Button>
