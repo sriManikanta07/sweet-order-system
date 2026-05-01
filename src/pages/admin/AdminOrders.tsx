@@ -10,6 +10,7 @@ import {
   Trash2,
   Search,
   Download,
+  Printer,
   IndianRupee,
   ShoppingBag,
   Clock,
