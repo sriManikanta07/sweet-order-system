@@ -24,7 +24,9 @@ type CartContextType = {
   clear: () => void;
 };
 
-const CartContext = createContext<CartContextType | null>(null);
+const CartContext =
+  ((globalThis as any).__CartContext__ as React.Context<CartContextType | null>) ??
+  ((globalThis as any).__CartContext__ = createContext<CartContextType | null>(null));
 const STORAGE_KEY = "bakery_cart_v1";
 
 export function CartProvider({ children }: { children: ReactNode }) {
