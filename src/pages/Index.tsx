@@ -78,6 +78,8 @@ const Index = () => {
           <BannerCarousel banners={banners} />
         )}
 
+        <ValueStrip />
+
         <section id="menu" className="container-bakery pb-12">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-xl">
@@ -148,8 +150,6 @@ const Index = () => {
             </div>
           )}
         </section>
-
-        <ValueStrip />
       </main>
 
       <SiteFooter />
