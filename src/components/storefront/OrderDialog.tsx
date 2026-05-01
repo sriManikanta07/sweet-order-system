@@ -135,19 +135,6 @@ export function OrderDialog({ product, open, onOpenChange }: OrderDialogProps) {
             </span>
           </div>
 
-          <div className="rounded-lg border border-border bg-card">
-            <div className="flex items-center justify-between border-b border-border px-4 py-2">
-              <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                Message preview
-              </span>
-              <span className="text-[10px] text-muted-foreground">
-                Sent to WhatsApp
-              </span>
-            </div>
-            <pre className="max-h-48 overflow-y-auto whitespace-pre-wrap break-words px-4 py-3 font-sans text-xs leading-relaxed text-foreground/90">
-{previewText}
-            </pre>
-          </div>
         </div>
 
         <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-end">
