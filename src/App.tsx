@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/hooks/useTheme";
+import { CartProvider } from "@/hooks/useCart";
 import { AdminGuard } from "@/components/admin/AdminGuard";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -24,6 +25,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
+            <CartProvider>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/admin/login" element={<AdminLogin />} />
@@ -62,6 +64,7 @@ const App = () => (
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </CartProvider>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>

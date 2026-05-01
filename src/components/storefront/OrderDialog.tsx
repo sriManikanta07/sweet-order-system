@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MessageCircle, Minus, Plus } from "lucide-react";
+import { ShoppingBag, Minus, Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { BAKERY, buildWhatsAppOrderText, buildWhatsAppOrderUrl } from "@/config/bakery";
+import { BAKERY } from "@/config/bakery";
+import { useCart } from "@/hooks/useCart";
+import { toast } from "@/hooks/use-toast";
 import type { Product } from "./ProductCard";
 
 interface OrderDialogProps {
@@ -22,6 +24,7 @@ interface OrderDialogProps {
 export function OrderDialog({ product, open, onOpenChange }: OrderDialogProps) {
   const [quantity, setQuantity] = useState(1);
   const [note, setNote] = useState("");
+  const { addItem, openCart } = useCart();
 
   useEffect(() => {
     if (open) {
@@ -33,18 +36,29 @@ export function OrderDialog({ product, open, onOpenChange }: OrderDialogProps) {
   if (!product) return null;
 
   const subtotal = Number(product.price) * quantity;
-  const messageOpts = {
-    productName: product.name,
-    quantity,
-    price: product.price,
-    note,
-    imageUrl: product.image_url,
-  };
-  const previewText = buildWhatsAppOrderText(messageOpts);
-  const orderUrl = buildWhatsAppOrderUrl(messageOpts);
 
   const dec = () => setQuantity((q) => Math.max(1, q - 1));
   const inc = () => setQuantity((q) => Math.min(99, q + 1));
+
+  const handleAdd = (alsoOpenCart: boolean) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: Number(product.price),
+      image_url: product.image_url,
+      quantity,
+      note: note.trim() || undefined,
+    });
+    toast({
+      title: "Added to cart",
+      description: `${quantity} × ${product.name}`,
+    });
+    onOpenChange(false);
+    if (alsoOpenCart) {
+      // small delay so the dialog close animation doesn't fight the sheet open
+      setTimeout(() => openCart(), 50);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -121,32 +135,25 @@ export function OrderDialog({ product, open, onOpenChange }: OrderDialogProps) {
             </span>
           </div>
 
-          <div className="rounded-lg border border-border bg-card">
-            <div className="flex items-center justify-between border-b border-border px-4 py-2">
-              <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                Message preview
-              </span>
-              <span className="text-[10px] text-muted-foreground">
-                Sent to WhatsApp
-              </span>
-            </div>
-            <pre className="max-h-48 overflow-y-auto whitespace-pre-wrap break-words px-4 py-3 font-sans text-xs leading-relaxed text-foreground/90">
-{previewText}
-            </pre>
-          </div>
         </div>
 
-        <DialogFooter>
-          <a
-            href={orderUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => onOpenChange(false)}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-soft transition-all duration-300 hover:bg-primary-glow hover:shadow-warm"
+        <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            onClick={() => handleAdd(false)}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-medium text-foreground transition-colors hover:border-primary/40 hover:text-primary sm:w-auto"
           >
-            <MessageCircle className="h-4 w-4" />
-            Send order on WhatsApp
-          </a>
+            <ShoppingBag className="h-4 w-4" />
+            Add to cart
+          </button>
+          <button
+            type="button"
+            onClick={() => handleAdd(true)}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-soft transition-all duration-300 hover:bg-primary-glow hover:shadow-warm sm:w-auto"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            Add &amp; view cart
+          </button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

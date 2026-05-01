@@ -1,4 +1,4 @@
-import { MessageCircle } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { BAKERY } from "@/config/bakery";
 
 export type Product = {
@@ -65,8 +65,8 @@ export function ProductCard({ product, onOrder }: ProductCardProps) {
           onClick={() => onOrder(product)}
           className="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-soft transition-all duration-300 hover:bg-primary-glow hover:shadow-warm"
         >
-          <MessageCircle className="h-4 w-4" />
-          Order now
+          <ShoppingBag className="h-4 w-4" />
+          Add to cart
         </button>
       </div>
     </article>
