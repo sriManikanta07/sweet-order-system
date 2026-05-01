@@ -6,6 +6,7 @@ import { BannerCarousel, type Banner } from "@/components/storefront/BannerCarou
 import { ProductCard, type Product } from "@/components/storefront/ProductCard";
 import { ValueStrip } from "@/components/storefront/ValueStrip";
 import { OrderDialog } from "@/components/storefront/OrderDialog";
+import { CartDrawer } from "@/components/storefront/CartDrawer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BAKERY } from "@/config/bakery";
 
@@ -158,6 +159,8 @@ const Index = () => {
         open={orderOpen}
         onOpenChange={setOrderOpen}
       />
+
+      <CartDrawer />
     </div>
   );
 };
