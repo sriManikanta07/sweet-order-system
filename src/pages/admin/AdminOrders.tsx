@@ -10,6 +10,7 @@ import {
   Trash2,
   Search,
   Download,
+  Printer,
   IndianRupee,
   ShoppingBag,
   Clock,
@@ -66,6 +67,7 @@ import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Phone, Calendar, Truck, StickyNote, Package } from "lucide-react";
 import { toast } from "sonner";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
+import { InvoiceDialog } from "@/components/admin/InvoiceDialog";
 
 type Order = Tables<"orders">;
 type DeliveryType = Order["delivery_type"];
@@ -129,6 +131,7 @@ const AdminOrders = () => {
   const [saving, setSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Order | null>(null);
   const [detailOrder, setDetailOrder] = useState<Order | null>(null);
+  const [invoiceOrder, setInvoiceOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     document.title = `Orders — ${BAKERY.name} Admin`;
@@ -513,6 +516,14 @@ const AdminOrders = () => {
                       </TableCell>
                       <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-end gap-1">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => setInvoiceOrder(o)}
+                            title="Print invoice"
+                          >
+                            <Printer className="h-4 w-4" />
+                          </Button>
                           <Button size="icon" variant="ghost" onClick={() => openEdit(o)}>
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -645,7 +656,16 @@ const AdminOrders = () => {
                   </section>
                 )}
 
-                <div className="flex gap-2 pt-2">
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <Button
+                    className="flex-1"
+                    onClick={() => {
+                      setInvoiceOrder(detailOrder);
+                    }}
+                  >
+                    <Printer className="mr-1.5 h-4 w-4" />
+                    Invoice
+                  </Button>
                   <Button
                     variant="outline"
                     className="flex-1"
@@ -850,6 +870,13 @@ const AdminOrders = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Invoice preview + print */}
+      <InvoiceDialog
+        order={invoiceOrder}
+        open={!!invoiceOrder}
+        onOpenChange={(o) => !o && setInvoiceOrder(null)}
+      />
     </div>
   );
 };
