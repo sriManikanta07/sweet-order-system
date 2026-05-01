@@ -656,7 +656,16 @@ const AdminOrders = () => {
                   </section>
                 )}
 
-                <div className="flex gap-2 pt-2">
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <Button
+                    className="flex-1"
+                    onClick={() => {
+                      setInvoiceOrder(detailOrder);
+                    }}
+                  >
+                    <Printer className="mr-1.5 h-4 w-4" />
+                    Invoice
+                  </Button>
                   <Button
                     variant="outline"
                     className="flex-1"
