@@ -870,6 +870,13 @@ const AdminOrders = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Invoice preview + print */}
+      <InvoiceDialog
+        order={invoiceOrder}
+        open={!!invoiceOrder}
+        onOpenChange={(o) => !o && setInvoiceOrder(null)}
+      />
     </div>
   );
 };
