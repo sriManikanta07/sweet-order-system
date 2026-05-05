@@ -153,16 +153,27 @@ const AdminOrders = () => {
     const total = orders.length;
     const pending = orders.filter((o) => o.order_status === "pending").length;
     const completed = orders.filter((o) => o.order_status === "completed").length;
-    const revenue = orders
-      .filter((o) => o.payment_status !== "pending")
-      .reduce((sum, o) => sum + Number(o.advance_paid ?? 0), 0);
+    // Effective amount collected per order:
+    // - paid: full total counted as collected
+    // - partial: advance counted
+    // - pending: nothing collected
+    const collectedFor = (o: Order) => {
+      const total = Number(o.total_amount ?? 0);
+      const advance = Number(o.advance_paid ?? 0);
+      if (o.payment_status === "paid") return total;
+      if (o.payment_status === "partial") return Math.min(advance, total);
+      return 0;
+    };
+    const revenue = orders.reduce((sum, o) => sum + collectedFor(o), 0);
     const outstanding = orders.reduce(
-      (sum, o) => sum + Math.max(0, Number(o.total_amount ?? 0) - Number(o.advance_paid ?? 0)),
+      (sum, o) => sum + Math.max(0, Number(o.total_amount ?? 0) - collectedFor(o)),
       0,
     );
     const todayStr = new Date().toISOString().slice(0, 10);
-    const today = orders.filter((o) => (o.created_at ?? "").slice(0, 10) === todayStr).length;
-    return { total, pending, completed, revenue, outstanding, today };
+    const todaysOrders = orders.filter((o) => (o.created_at ?? "").slice(0, 10) === todayStr);
+    const today = todaysOrders.length;
+    const todayRevenue = todaysOrders.reduce((sum, o) => sum + collectedFor(o), 0);
+    return { total, pending, completed, revenue, outstanding, today, todayRevenue };
   }, [orders]);
 
   const filtered = useMemo(() => {
@@ -206,6 +217,20 @@ const AdminOrders = () => {
 
   const upsertMutation = useMutation({
     mutationFn: async () => {
+      const total = Number(form.total_amount) || 0;
+      let advance = Number(form.advance_paid) || 0;
+      let paymentStatus = form.payment_status;
+      // Normalize: keep advance/payment_status mathematically consistent
+      if (paymentStatus === "paid") {
+        advance = total;
+      } else if (paymentStatus === "pending") {
+        advance = 0;
+      } else {
+        // partial — clamp advance to (0, total)
+        advance = Math.min(Math.max(advance, 0), total);
+        if (advance >= total && total > 0) paymentStatus = "paid";
+        else if (advance <= 0) paymentStatus = "pending";
+      }
       const payload: TablesInsert<"orders"> = {
         customer_name: form.customer_name.trim(),
         phone_number: form.phone_number.trim(),
@@ -213,9 +238,9 @@ const AdminOrders = () => {
         quantity: Math.max(1, parseInt(form.quantity, 10) || 1),
         delivery_date: form.delivery_date,
         delivery_type: form.delivery_type,
-        total_amount: Number(form.total_amount) || 0,
-        advance_paid: Number(form.advance_paid) || 0,
-        payment_status: form.payment_status,
+        total_amount: total,
+        advance_paid: advance,
+        payment_status: paymentStatus,
         order_status: form.order_status,
         notes: form.notes.trim() || null,
         order_code: editing?.order_code ?? "",
@@ -264,9 +289,18 @@ const AdminOrders = () => {
   };
 
   const quickPayment = async (o: Order, next: PaymentStatus) => {
+    const total = Number(o.total_amount ?? 0);
+    const currentAdvance = Number(o.advance_paid ?? 0);
+    // Keep advance_paid in sync with payment_status so totals/outstanding match
+    const nextAdvance =
+      next === "paid"
+        ? total
+        : next === "pending"
+        ? 0
+        : Math.min(currentAdvance, total); // partial: keep existing (capped)
     const { error } = await supabase
       .from("orders")
-      .update({ payment_status: next })
+      .update({ payment_status: next, advance_paid: nextAdvance })
       .eq("id", o.id);
     if (error) {
       toast.error(error.message);
@@ -371,11 +405,16 @@ const AdminOrders = () => {
         </div>
 
         {/* Stats */}
-        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           <StatCard icon={ShoppingBag} label="Total orders" value={stats.total} />
           <StatCard icon={Calendar} label="Today" value={stats.today} />
           <StatCard icon={Clock} label="Pending" value={stats.pending} />
           <StatCard icon={CheckCircle2} label="Completed" value={stats.completed} />
+          <StatCard
+            icon={IndianRupee}
+            label="Revenue collected"
+            value={`${BAKERY.currency}${stats.revenue.toLocaleString()}`}
+          />
           <StatCard
             icon={IndianRupee}
             label="Outstanding"
