@@ -1,4 +1,5 @@
-import { Croissant, Instagram, MessageCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Croissant, Instagram, MessageCircle, Shield } from "lucide-react";
 import { BAKERY, buildWhatsAppOrderUrl } from "@/config/bakery";
 
 export function SiteFooter() {
@@ -48,6 +49,13 @@ export function SiteFooter() {
               >
                 <Instagram className="h-5 w-5" />
               </a>
+              <Link
+                to="/admin"
+                aria-label="Admin"
+                className="transition-colors hover:text-primary"
+              >
+                <Shield className="h-5 w-5" />
+              </Link>
             </div>
           </div>
         </div>
