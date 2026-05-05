@@ -256,7 +256,7 @@ export function InvoiceDialog({
             </table>
 
             {/* Totals */}
-            <div className="ml-auto mt-3 w-[300px] text-sm">
+            <div className="totals-wrap relative ml-auto mt-3 w-[300px] text-sm">
               {subtotal > 0 && (
                 <div className="flex justify-between py-1.5">
                   <span className="text-neutral-600">Subtotal</span>
@@ -275,17 +275,27 @@ export function InvoiceDialog({
                 <span>Total</span>
                 <span>{fmt(total)}</span>
               </div>
-              <div className="flex justify-between py-1.5">
-                <span className="text-neutral-600">Advance paid</span>
-                <span>{fmt(advance)}</span>
-              </div>
-              <div
-                className="flex justify-between py-1.5 font-semibold"
-                style={{ color: balance > 0 ? "#b91c1c" : "#047857" }}
-              >
-                <span>{balance > 0 ? "Balance due" : "Paid in full"}</span>
-                <span>{fmt(balance)}</span>
-              </div>
+              {!isPaid && (
+                <>
+                  <div className="flex justify-between py-1.5">
+                    <span className="text-neutral-600">Advance paid</span>
+                    <span>{fmt(advance)}</span>
+                  </div>
+                  <div
+                    className="flex justify-between py-1.5 font-semibold"
+                    style={{ color: balance > 0 ? "#b91c1c" : "#047857" }}
+                  >
+                    <span>{balance > 0 ? "Balance due" : "Paid in full"}</span>
+                    <span>{fmt(balance)}</span>
+                  </div>
+                </>
+              )}
+              {isPaid && (
+                <div className="stamp" aria-label="Paid stamp">
+                  Paid
+                  <small>{new Date(order.updated_at ?? order.created_at).toLocaleDateString("en-IN")}</small>
+                </div>
+              )}
             </div>
 
             {/* Notes */}
