@@ -289,18 +289,11 @@ const AdminOrders = () => {
   };
 
   const quickPayment = async (o: Order, next: PaymentStatus) => {
-    const total = Number(o.total_amount ?? 0);
-    const currentAdvance = Number(o.advance_paid ?? 0);
-    // Keep advance_paid in sync with payment_status so totals/outstanding match
-    const nextAdvance =
-      next === "paid"
-        ? total
-        : next === "pending"
-        ? 0
-        : Math.min(currentAdvance, total); // partial: keep existing (capped)
+    // Only update payment_status; leave advance_paid untouched.
+    // Stats use payment_status to compute collected/outstanding.
     const { error } = await supabase
       .from("orders")
-      .update({ payment_status: next, advance_paid: nextAdvance })
+      .update({ payment_status: next })
       .eq("id", o.id);
     if (error) {
       toast.error(error.message);
