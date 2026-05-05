@@ -217,6 +217,20 @@ const AdminOrders = () => {
 
   const upsertMutation = useMutation({
     mutationFn: async () => {
+      const total = Number(form.total_amount) || 0;
+      let advance = Number(form.advance_paid) || 0;
+      let paymentStatus = form.payment_status;
+      // Normalize: keep advance/payment_status mathematically consistent
+      if (paymentStatus === "paid") {
+        advance = total;
+      } else if (paymentStatus === "pending") {
+        advance = 0;
+      } else {
+        // partial — clamp advance to (0, total)
+        advance = Math.min(Math.max(advance, 0), total);
+        if (advance >= total && total > 0) paymentStatus = "paid";
+        else if (advance <= 0) paymentStatus = "pending";
+      }
       const payload: TablesInsert<"orders"> = {
         customer_name: form.customer_name.trim(),
         phone_number: form.phone_number.trim(),
@@ -224,9 +238,9 @@ const AdminOrders = () => {
         quantity: Math.max(1, parseInt(form.quantity, 10) || 1),
         delivery_date: form.delivery_date,
         delivery_type: form.delivery_type,
-        total_amount: Number(form.total_amount) || 0,
-        advance_paid: Number(form.advance_paid) || 0,
-        payment_status: form.payment_status,
+        total_amount: total,
+        advance_paid: advance,
+        payment_status: paymentStatus,
         order_status: form.order_status,
         notes: form.notes.trim() || null,
         order_code: editing?.order_code ?? "",
