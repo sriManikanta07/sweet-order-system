@@ -391,11 +391,16 @@ const AdminOrders = () => {
         </div>
 
         {/* Stats */}
-        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           <StatCard icon={ShoppingBag} label="Total orders" value={stats.total} />
           <StatCard icon={Calendar} label="Today" value={stats.today} />
           <StatCard icon={Clock} label="Pending" value={stats.pending} />
           <StatCard icon={CheckCircle2} label="Completed" value={stats.completed} />
+          <StatCard
+            icon={IndianRupee}
+            label="Revenue collected"
+            value={`${BAKERY.currency}${stats.revenue.toLocaleString()}`}
+          />
           <StatCard
             icon={IndianRupee}
             label="Outstanding"
