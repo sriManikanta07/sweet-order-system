@@ -218,19 +218,8 @@ const AdminOrders = () => {
   const upsertMutation = useMutation({
     mutationFn: async () => {
       const total = Number(form.total_amount) || 0;
-      let advance = Number(form.advance_paid) || 0;
-      let paymentStatus = form.payment_status;
-      // Normalize: keep advance/payment_status mathematically consistent
-      if (paymentStatus === "paid") {
-        advance = total;
-      } else if (paymentStatus === "pending") {
-        advance = 0;
-      } else {
-        // partial — clamp advance to (0, total)
-        advance = Math.min(Math.max(advance, 0), total);
-        if (advance >= total && total > 0) paymentStatus = "paid";
-        else if (advance <= 0) paymentStatus = "pending";
-      }
+      const advance = Math.min(Math.max(Number(form.advance_paid) || 0, 0), total);
+      const paymentStatus = form.payment_status;
       const payload: TablesInsert<"orders"> = {
         customer_name: form.customer_name.trim(),
         phone_number: form.phone_number.trim(),
@@ -289,18 +278,11 @@ const AdminOrders = () => {
   };
 
   const quickPayment = async (o: Order, next: PaymentStatus) => {
-    const total = Number(o.total_amount ?? 0);
-    const currentAdvance = Number(o.advance_paid ?? 0);
-    // Keep advance_paid in sync with payment_status so totals/outstanding match
-    const nextAdvance =
-      next === "paid"
-        ? total
-        : next === "pending"
-        ? 0
-        : Math.min(currentAdvance, total); // partial: keep existing (capped)
+    // Only update payment_status; leave advance_paid untouched.
+    // Stats use payment_status to compute collected/outstanding.
     const { error } = await supabase
       .from("orders")
-      .update({ payment_status: next, advance_paid: nextAdvance })
+      .update({ payment_status: next })
       .eq("id", o.id);
     if (error) {
       toast.error(error.message);
