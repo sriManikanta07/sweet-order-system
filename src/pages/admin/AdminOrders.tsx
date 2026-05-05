@@ -153,16 +153,27 @@ const AdminOrders = () => {
     const total = orders.length;
     const pending = orders.filter((o) => o.order_status === "pending").length;
     const completed = orders.filter((o) => o.order_status === "completed").length;
-    const revenue = orders
-      .filter((o) => o.payment_status !== "pending")
-      .reduce((sum, o) => sum + Number(o.advance_paid ?? 0), 0);
+    // Effective amount collected per order:
+    // - paid: full total counted as collected
+    // - partial: advance counted
+    // - pending: nothing collected
+    const collectedFor = (o: Order) => {
+      const total = Number(o.total_amount ?? 0);
+      const advance = Number(o.advance_paid ?? 0);
+      if (o.payment_status === "paid") return total;
+      if (o.payment_status === "partial") return Math.min(advance, total);
+      return 0;
+    };
+    const revenue = orders.reduce((sum, o) => sum + collectedFor(o), 0);
     const outstanding = orders.reduce(
-      (sum, o) => sum + Math.max(0, Number(o.total_amount ?? 0) - Number(o.advance_paid ?? 0)),
+      (sum, o) => sum + Math.max(0, Number(o.total_amount ?? 0) - collectedFor(o)),
       0,
     );
     const todayStr = new Date().toISOString().slice(0, 10);
-    const today = orders.filter((o) => (o.created_at ?? "").slice(0, 10) === todayStr).length;
-    return { total, pending, completed, revenue, outstanding, today };
+    const todaysOrders = orders.filter((o) => (o.created_at ?? "").slice(0, 10) === todayStr);
+    const today = todaysOrders.length;
+    const todayRevenue = todaysOrders.reduce((sum, o) => sum + collectedFor(o), 0);
+    return { total, pending, completed, revenue, outstanding, today, todayRevenue };
   }, [orders]);
 
   const filtered = useMemo(() => {
