@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Croissant, ShoppingBag, ShoppingCart } from "lucide-react";
+import { Croissant, ShoppingCart } from "lucide-react";
 import { BAKERY } from "@/config/bakery";
 import { ThemeToggle } from "@/components/storefront/ThemeToggle";
 import { useCart } from "@/hooks/useCart";
@@ -49,13 +49,6 @@ export function SiteHeader() {
               </span>
             )}
           </button>
-          <Link
-            to="/admin"
-            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-2 text-xs font-medium text-foreground/80 shadow-soft transition-all hover:border-primary/40 hover:text-primary sm:text-sm"
-          >
-            <ShoppingBag className="h-3.5 w-3.5" />
-            Admin
-          </Link>
         </nav>
       </div>
     </header>
