@@ -80,7 +80,9 @@ export function InvoiceDialog({
   const items = parseItems(order);
   const subtotal = items.reduce((s, l) => s + l.qty * l.price, 0);
   const total = Number(order.total_amount);
-  const advance = Number(order.advance_paid);
+  const isPaid = order.payment_status === "paid";
+  // When marked paid, show invoice as fully settled regardless of stored advance
+  const advance = isPaid ? total : Number(order.advance_paid);
   const balance = Math.max(0, total - advance);
   // If parsed subtotal doesn't reconcile with total, treat the difference as adjustments
   const adjustment = +(total - subtotal).toFixed(2);
