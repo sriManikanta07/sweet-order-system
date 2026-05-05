@@ -117,6 +117,9 @@ export function InvoiceDialog({
   .notes{margin-top:24px;font-size:12px;color:#444;padding:12px;background:#f7f5f0;border-left:3px solid #111}
   .foot{margin-top:36px;padding-top:14px;border-top:1px dashed #bbb;text-align:center;font-size:11px;color:#666;letter-spacing:.06em}
   .pill{display:inline-block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:99px;border:1px solid #111;margin-left:6px}
+  .totals-wrap{position:relative}
+  .stamp{position:absolute;right:-10px;bottom:-6px;transform:rotate(-14deg);border:3px double #047857;color:#047857;font-family:Georgia,serif;font-weight:700;letter-spacing:.18em;text-transform:uppercase;font-size:18px;padding:6px 14px;border-radius:6px;opacity:.9;box-shadow:inset 0 0 0 1px #047857}
+  .stamp small{display:block;font-size:9px;letter-spacing:.2em;text-align:center;margin-top:2px;font-weight:600}
   @media print{body{padding:0}}
 </style></head><body><div class="invoice">${node.innerHTML}</div>
 <script>window.onload=()=>{setTimeout(()=>{window.print();},150);};</script>
