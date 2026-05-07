@@ -18,7 +18,13 @@ interface BannerCarouselProps {
 export function BannerCarousel({ banners }: BannerCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: true, align: "start" },
-    [Autoplay({ delay: 5500, stopOnInteraction: false, stopOnMouseEnter: true })]
+    [
+      Autoplay({
+        delay: 5500,
+        stopOnInteraction: false,
+        stopOnMouseEnter: true,
+      }),
+    ],
   );
   const [selected, setSelected] = useState(0);
 
@@ -47,14 +53,14 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
                     alt={b.title ?? "Bakery feature"}
                     className={cn(
                       "h-full w-full object-cover",
-                      i === selected && "animate-slow-zoom"
+                      i === selected && "animate-slow-zoom",
                     )}
                     loading={i === 0 ? "eager" : "lazy"}
                   />
                   <div className="absolute inset-0 bg-gradient-overlay" />
                   {b.title && (
                     <div className="absolute inset-x-0 bottom-0 p-6 sm:p-12">
-                      <h2 className="max-w-2xl font-display text-3xl font-semibold leading-tight text-primary-foreground text-balance sm:text-5xl">
+                      <h2 className="max-w-2xl font-display text-3xl font-semibold leading-tight text-white  text-balance sm:text-5xl">
                         {b.title}
                       </h2>
                     </div>
@@ -64,7 +70,12 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
               return (
                 <div className="min-w-0 flex-[0_0_100%]" key={b.id}>
                   {b.link_url ? (
-                    <a href={b.link_url} target="_blank" rel="noopener noreferrer" className="block">
+                    <a
+                      href={b.link_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
+                    >
                       {Inner}
                     </a>
                   ) : (
@@ -103,7 +114,7 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
                   aria-label={`Go to slide ${i + 1}`}
                   className={cn(
                     "h-1.5 rounded-full bg-card/60 transition-all",
-                    i === selected ? "w-8 bg-card" : "w-1.5 hover:bg-card/90"
+                    i === selected ? "w-8 bg-card" : "w-1.5 hover:bg-card/90",
                   )}
                 />
               ))}

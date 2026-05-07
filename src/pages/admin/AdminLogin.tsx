@@ -62,7 +62,7 @@ const AdminLogin = () => {
           <span className="grid h-10 w-10 place-items-center rounded-full bg-gradient-warm text-primary-foreground shadow-warm">
             <Croissant className="h-5 w-5" />
           </span>
-          <span className="font-display text-2xl font-semibold text-foreground">
+          <span className="font-display text-2xl font-semibold text-black">
             {BAKERY.name}
           </span>
         </Link>
@@ -155,7 +155,13 @@ const AdminLogin = () => {
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          ← <Link to="/" className="underline-offset-4 hover:text-primary hover:underline">Back to storefront</Link>
+          ←{" "}
+          <Link
+            to="/"
+            className="underline-offset-4 text-black hover:text-primary hover:underline"
+          >
+            Back to storefront
+          </Link>
         </p>
       </div>
     </div>
